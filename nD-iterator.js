@@ -1,17 +1,21 @@
 class Iterator {
-	constructor(array) {
+	constructor(array, depth = Infinity) {
 		this.array = array
 		this.index = -1
+		this.depth = depth
 		this.childIteraotr = null
 		this._goNext()
 	}
 	_goNext() {
-		let {array, index} = this
-		for (index += 1; index < array.length && Array.isArray(array[index]); index++) {
-			const it = new Iterator(array[index])
-			if (it.hasNext()) {
-				this.childIteraotr = it
-				break
+		let {array, index, depth} = this
+		index += 1
+		if (depth > 1) {
+			for (; index < array.length && Array.isArray(array[index]); index++) {
+				const it = new Iterator(array[index], depth - 1)
+				if (it.hasNext()) {
+					this.childIteraotr = it
+					break
+				}
 			}
 		}
 		this.index = index
@@ -61,7 +65,7 @@ class Iterator {
 
 var arr = [[-1, 0, [], ['a'], [], [], ['b']], undefined, [1,2,3], [], [4,5], null, [6], [7, [8, [9, [10, 11]]]], null]
 
-var it = new Iterator(arr)
+var it = new Iterator(arr, 3)
 
 console.log(it.remove())
 console.log(it.remove())
