@@ -7,7 +7,12 @@ class Iterator {
 		this._goNext()
 	}
 	_goNext() {
-		let {array, index, depth} = this
+		let {array, index, depth, childIteraotr} = this
+		if (childIteraotr && childIteraotr.hasNext()) {
+			return
+		}
+
+		this.childIteraotr = null
 		index += 1
 		if (depth > 1) {
 			for (; index < array.length && Array.isArray(array[index]); index++) {
@@ -28,42 +33,26 @@ class Iterator {
 			return {value: undefined, done: true}
 		}
 		const {array, index, childIteraotr, _goNext} = this
-		if (childIteraotr) {
-			const {value, done} = childIteraotr.next()
-			if (done) {
-				this.childIteraotr = null
-				this._goNext()
-			}
-			return {value, done: !this.hasNext()}
-		}
-		const value = array[index]
+		const value = childIteraotr ? childIteraotr.next().value : array[index]
 		this._goNext()
 		return {value, done: !this.hasNext()}
 	}
 	remove() {
 		if (!this.hasNext()) {
-			return undefined
+			throw new Error('No next value for removing.')
 		}
-		const {array, index, childIteraotr} = this
-		if (childIteraotr) {
-			const ret = childIteraotr.remove()
-			if (!childIteraotr.hasNext()) {
-				this.childIteraotr = null
-				this._goNext()
-			}
-			return ret
-		}
-		const ret = array.splice(index, 1)
-		if (this.hasNext() && Array.isArray(array[index])) {
+		let {array, index, childIteraotr} = this
+		const ret = childIteraotr ? childIteraotr.remove() : array.splice(index, 1)[0]
+		if (!childIteraotr && this.hasNext()) {
 			this.index -= 1
-			this._goNext()
 		}
-		return ret[0]
+		this._goNext()
+		return ret
 	}
 }
 
 
-var arr = [[-1, 0, [], ['a'], [], [], ['b']], undefined, [1,2,3], [], [4,5], null, [6], [7, [8, [9, [10, 11]]]], null]
+var arr = [[-1, 0, [], ['a'], [], [], ['b']], undefined, [1,2,3], [], [4,5], null, [6], [7, [8, [9, [10, 11]]]], null, 12]
 
 var it = new Iterator(arr, 3)
 
