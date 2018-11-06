@@ -4,6 +4,10 @@ function prefixLi(deep) {
 	return `<li deep="${deep}">`
 }
 
+function genBank(pad) {
+	return new Array(pad).fill(' ').join(' ')
+}
+
 function transform(data) {
 	if (!data.length) {
 		return ''
@@ -15,13 +19,13 @@ function transform(data) {
 			ret.push('</li>')
 			ret.push(...new Array(data[i - 1] - data[i]).fill(undefined).map(() => {
 				pad -= 2
-				return '\n' + (new Array(pad).fill(' ').join('')) + '</li>'
+				return `\n${genBank(pad)}</li>`
 			}))
 		}
-		ret.push('\n' + (new Array(pad).fill(' ').join('')) + prefixLi(data[i]))
+		ret.push(`\n${genBank(pad)}${prefixLi(data[i])}`)
 	}
 	ret.push('</li>')
-	return '\n' + ret.join('') + '\n'
+	return ret.join('')
 }
 
 transform(data)
