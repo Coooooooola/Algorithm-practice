@@ -15,10 +15,10 @@ function transform(data) {
 			ret.push('</li>')
 			ret.push(...new Array(data[i - 1] - data[i]).fill(undefined).map(() => {
 				pad -= 2
-				return '\n' + (new Array(pad).fill('  ').join('')) + '</li>'
+				return '\n' + (new Array(pad).fill(' ').join('')) + '</li>'
 			}))
 		}
-		ret.push('\n' + (new Array(pad).fill('  ').join('')) + prefixLi(data[i]))
+		ret.push('\n' + (new Array(pad).fill(' ').join('')) + prefixLi(data[i]))
 	}
 	ret.push('</li>')
 	return '\n' + ret.join('') + '\n'
